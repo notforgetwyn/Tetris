@@ -59,52 +59,7 @@ void CursorJump(int x, int y)
 	HANDLE handle = GetStdHandle(STD_OUTPUT_HANDLE); //获取控制台句柄
 	SetConsoleCursorPosition(handle, pos); //设置光标位置
 }
-void StartGame()
-{
-	while (1)
-	{
-		ushort_16 row = rand() % 7, colum = rand() % 4, floor = 0;
-		ushort_16 temp[4] = 
-		{ fall[row][colum][0]
-		, fall[row][colum][1]
-		, fall[row][colum][2]
-		, fall[row][colum][3] };
-		while (1)
-		{
-			if (_kbhit())
-			{
-				char ch = _getch();
-				switch (ch)
-				{
-				case DOWN:
-				{
 
-				}
-				}
-			}
-			else
-			{
-				Drawfall(temp, floor);
-				if (!isDown(temp, floor))
-				{
-					Sleep(100);
-					DrawBlock(temp, floor);
-					floor++;
-					
-				}
-				else
-				{
-					Fill(temp, floor);
-					if(Full())
-						Move();
-					break;
-				}
-			}
-			
-		}
-
-	}
-}
 void Drawfall(ushort_16 temp[],ushort_16 floor)
 {
 	x = 0; y = floor;
@@ -259,5 +214,13 @@ void Move()
 	{
 		data[j] = data[j - 1];
 	}
-	data[0] = data[23];
+	data[0] = 0;
+	x = 0;
+	for (ushort_16 j = 0; j < 24; j++)
+	{
+		conversion(data[j]);
+		std::cout << std::endl;
+		x = 0;
+		y++;
+	}
 }
