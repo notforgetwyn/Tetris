@@ -4,5 +4,6 @@
 int main()
 {
 	init();
+	srand((unsigned int)time(NULL));
 	StartGame();
 }

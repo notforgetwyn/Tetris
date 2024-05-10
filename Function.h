@@ -1,6 +1,6 @@
 #pragma once
-unsigned short data[24];
-unsigned short fall[7][4][4] =
+ushort_16 data[24];
+ushort_16 fall[7][4][4] =
 {
 		0x0,0x2,0x7,0x0,0x0,0x2,0x3,0x2,0x0,0x7,0x2,0x0,0x0,0x2,0x6,0x2,
 		0x0,0x6,0x2,0x2,0x0,0x1,0x7,0x0,0x0,0x2,0x2,0x3,0x0,0x7,0x4,0x0,
@@ -15,24 +15,26 @@ void init();
 void HideCursor();
 void CursorJump(int x, int y);
 void StartGame();
-void Drawfall(unsigned short temp[], unsigned short floor);
-void DrawBlock(unsigned short temp[], unsigned short floor);
-void conversion( unsigned short n);
-void conversion1(unsigned short n);
-void conversion2(unsigned short n);
-bool isDown(unsigned short temp[], unsigned short floor);
-void Fill(unsigned short temp[], unsigned short floor);
+void Drawfall(ushort_16 temp[], ushort_16 floor);
+void DrawBlock(ushort_16 temp[], ushort_16 floor);
+ushort_16 length(ushort_16 n);
+void conversion( ushort_16 n);
+void conversion1(ushort_16 n);
+void conversion2(ushort_16 n);
+bool isDown(ushort_16 temp[], ushort_16 floor);
+void Fill(ushort_16 temp[], ushort_16 floor);
 bool Full();
+void Move();
 void init()
 {
-	for (unsigned short j = 0; j <= 22; j++)
+	for (ushort_16 j = 0; j <= 22; j++)
 		data[j] = 0xe007;
 	data[23] = 0xffff;
-	for (unsigned short i = 0; i < 7; i++)
+	for (ushort_16 i = 0; i < 7; i++)
 		for (int j = 0; j < 4; j++)
-			for (unsigned short k = 0; k < 4; k++)
+			for (ushort_16 k = 0; k < 4; k++)
 				fall[i][j][k] = fall[i][j][k] << 4;
-	for (unsigned short j = 0; j < 24; j++)
+	for (ushort_16 j = 0; j < 24; j++)
 	{
 		conversion(data[j]);
 		std::cout << std::endl;
@@ -61,8 +63,8 @@ void StartGame()
 {
 	while (1)
 	{
-		unsigned short row = rand() % 7, colum = rand() % 4, floor = 0;
-		unsigned short temp[4] = 
+		ushort_16 row = rand() % 7, colum = rand() % 4, floor = 0;
+		ushort_16 temp[4] = 
 		{ fall[row][colum][0]
 		, fall[row][colum][1]
 		, fall[row][colum][2]
@@ -71,14 +73,21 @@ void StartGame()
 		{
 			if (_kbhit())
 			{
-				;
+				char ch = _getch();
+				switch (ch)
+				{
+				case DOWN:
+				{
+
+				}
+				}
 			}
 			else
 			{
 				Drawfall(temp, floor);
-				if (isDown(temp, floor))
+				if (!isDown(temp, floor))
 				{
-					Sleep(500);
+					Sleep(100);
 					DrawBlock(temp, floor);
 					floor++;
 					
@@ -86,7 +95,8 @@ void StartGame()
 				else
 				{
 					Fill(temp, floor);
-					Full();
+					if(Full())
+						Move();
 					break;
 				}
 			}
@@ -95,132 +105,145 @@ void StartGame()
 
 	}
 }
-void Drawfall(unsigned short temp[],unsigned short floor)
+void Drawfall(ushort_16 temp[],ushort_16 floor)
 {
-	x = 0, y = floor;
-	for (unsigned short j = 0; j < 4; j++)
+	x = 0; y = floor;
+	for (ushort_16 j = 0; j < 4; j++)
 	{
+		x = x + (16 - length(temp[j]));
 		conversion1(temp[j]);
 		std::cout << std::endl;
 		x = 0;
 		y++;
 	}
 }
-void DrawBlock(unsigned short temp[], unsigned short floor)
+void DrawBlock(ushort_16 temp[], ushort_16 floor)
 {
-	x = 0, y = floor;
-	for (unsigned short j = 0; j < 4; j++)
+	x = 0; y = floor;
+	for (ushort_16 j = 0; j < 4; j++)
 	{
+		x = x +(16 - length(temp[j]));
 		conversion2(temp[j]);
 		std::cout << std::endl;
 		x = 0;
 		y++;
 	}
 }
-void conversion(unsigned unsigned short n) {
-	if (n <= 1) {
-		if (n == 1)
-		{
-			CursorJump(x, y);
-			std::cout << "¡ö";
-			x++;
-		}
-		else
-		{
-			CursorJump(x, y);
-			std::cout << "  ";
-			x++;
-		}
-	}
-	else {
-		conversion(n / 2);
-		if (n%2 == 1)
-		{
-			CursorJump(x, y);
-			std::cout << "¡ö";
-			x++;
-		}
-		else
-		{
-			CursorJump(x, y);
-			std::cout << "  ";
-			x++;
-		}
-	}
-}
-void conversion1(unsigned unsigned short n) {
-	if (n <= 1) {
-		if (n == 1)
-		{
-			CursorJump(x, y);
-			std::cout << "¡ö";
-			x++;
-		}
-		else
-		{
-			CursorJump(x, y);
-			x++;
-		}
-	}
-	else {
-		conversion(n / 2);
-		if (n % 2 == 1)
-		{
-			CursorJump(x, y);
-			std::cout << "¡ö";
-			x++;
-		}
-		else
-		{
-			CursorJump(x, y);
-			x++;
-		}
-	}
-}
-void conversion2(unsigned unsigned short n) {
-	if (n <= 1) {
-		if (n == 1)
-		{
-			CursorJump(x, y);
-			std::cout << "  ";
-			x++;
-		}
-		else
-		{
-			CursorJump(x, y);
-			x++;
-		}
-	}
-	else {
-		conversion(n / 2);
-		if (n % 2 == 1)
-		{
-			CursorJump(x, y);
-			std::cout << "  ";
-			x++;
-		}
-		else
-		{
-			CursorJump(x, y);
-			x++;
-		}
-	}
-}
-bool isDown(unsigned short temp[], unsigned short floor)
+ushort_16 length(ushort_16 n)
 {
-	for (unsigned short j = 0; j <= 3; j++)
-		if ((temp[0] & data[floor + j+1]) + (temp[1] & data[floor + j + 1]) + (temp[2] & data[floor + j + 1]) + (temp[3] & data[floor + j + 1])) return true;
+	ushort_16 sum = 0;
+	while (n != 0)
+	{
+		sum++;
+		n = n / 2;
+	}
+	return sum;
+}
+void conversion(unsigned ushort_16 n) {
+	if (n <= 1) {
+		if (n == 1)
+		{
+			CursorJump(x, y);
+			std::cout << "¡ö";
+			x++;
+		}
+		else
+		{
+			CursorJump(x, y);
+			std::cout << "  ";
+			x++;
+		}
+	}
+	else {
+		conversion(n / 2);
+		if (n % 2 == 1)
+		{
+			CursorJump(x, y);
+			std::cout << "¡ö";
+			x++;
+		}
+		else
+		{
+			CursorJump(x, y);
+			std::cout << "  ";
+			x++;
+		}
+	}
+}
+void conversion1(unsigned ushort_16 n) {
+	if (n <= 1) {
+		if (n == 1)
+		{
+			CursorJump(x, y);
+			std::cout << "¡ö";
+			x++;
+		}
+		else
+		{
+			CursorJump(x, y);
+			x++;
+		}
+	}
+	else {
+		conversion1(n / 2);
+		if (n % 2 == 1)
+		{
+			CursorJump(x, y);
+			std::cout << "¡ö";
+			x++;
+		}
+		else
+		{
+			CursorJump(x, y);
+			x++;
+		}
+	}
+}
+void conversion2(unsigned ushort_16 n) {
+	if (n <= 1) {
+		if (n == 1)
+		{
+			CursorJump(x, y);
+			std::cout << "  ";
+			x++;
+		}
+		else
+		{
+			CursorJump(x, y);
+			x++;
+		}
+	}
+	else {
+		conversion2(n / 2);
+		if (n % 2 == 1)
+		{
+			CursorJump(x, y);
+			std::cout << "  ";
+			x++;
+		}
+		else
+		{
+			CursorJump(x, y);
+			x++;
+		}
+	}
+}
+bool isDown(ushort_16 temp[], ushort_16 floor)
+{
+	for (ushort_16 j = 0; j <= 3; j++)
+		if ((temp[j] & data[floor + j+1]))
+			return true;
 	return false;
 }
-void Fill(unsigned short temp[], unsigned short floor)
+void Fill(ushort_16 temp[], ushort_16 floor)
 {
-	for (unsigned short j = 0; j <= 3; j++)
-		data[floor + j] = data[floor + j] | temp[floor];
+	for (ushort_16 j = 0; j <= 3; j++)
+		data[floor + j] = data[floor + j] | temp[j];
 
 }
 bool Full()
 {
-	for (unsigned short j = 0; j <= 22; j++)
+	for (ushort_16 j = 0; j <= 22; j++)
 	{
 		if (data[j] == 0xffff)
 		{
@@ -230,4 +253,11 @@ bool Full()
 	}
 	return false;
 }
-
+void Move()
+{
+	for (ushort_16 j = 22; j > 0; j--)
+	{
+		data[j] = data[j - 1];
+	}
+	data[0] = data[23];
+}
