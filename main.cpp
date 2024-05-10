@@ -78,8 +78,9 @@ int main()
 						if (!isDown(temp, floor))
 						{
 							DrawBlock(temp, floor);
+							form = (form + 1) % 4;
 							for (int j = 0; j < 4; j++)
-								temp[j] = fall[shape][(form + 1) % 4][j];
+								temp[j] = fall[shape][form][j];
 						}
 						break;
 					}
@@ -91,6 +92,10 @@ int main()
 					case 's':
 					case 'S':
 						system("pause>nul");
+					case 'r':
+					case 'R':
+						system("cls");
+						main();
 					}
 				}
 				else

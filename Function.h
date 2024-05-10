@@ -27,6 +27,7 @@ bool Full();
 void Move();
 void init()
 {
+	x = 0, y = 0;
 	for (ushort_16 j = 0; j <= 22; j++)
 		data[j] = 0xe007;
 	data[23] = 0xffff;
@@ -44,20 +45,20 @@ void init()
 }
 void HideCursor()
 {
-	CONSOLE_CURSOR_INFO curInfo; //定义光标信息的结构体变量
-	curInfo.dwSize = 1;  //如果没赋值的话，隐藏光标无效
-	curInfo.bVisible = FALSE; //将光标设置为不可见
-	HANDLE handle = GetStdHandle(STD_OUTPUT_HANDLE); //获取控制台句柄
-	SetConsoleCursorInfo(handle, &curInfo); //设置光标信息
+	CONSOLE_CURSOR_INFO curInfo;
+	curInfo.dwSize = 1;
+	curInfo.bVisible = FALSE;
+	HANDLE handle = GetStdHandle(STD_OUTPUT_HANDLE);
+	SetConsoleCursorInfo(handle, &curInfo);
 }
 //光标跳转
 void CursorJump(int x, int y)
 {
-	COORD pos; //定义光标位置的结构体变量
-	pos.X = x; //横坐标设置
-	pos.Y = y; //纵坐标设置
-	HANDLE handle = GetStdHandle(STD_OUTPUT_HANDLE); //获取控制台句柄
-	SetConsoleCursorPosition(handle, pos); //设置光标位置
+	COORD pos;
+	pos.X = x;
+	pos.Y = y;
+	HANDLE handle = GetStdHandle(STD_OUTPUT_HANDLE);
+	SetConsoleCursorPosition(handle, pos);
 }
 
 void Drawfall(ushort_16 temp[],ushort_16 floor)
