@@ -8,14 +8,15 @@ int main()
 		{
 			int t = 0;
 			ushort_16 shape = rand() % 7, form = rand() % 4, floor = 0;
-			ushort_16 temp[4] =
-			{ fall[shape][form][0]
-			, fall[shape][form][1]
-			, fall[shape][form][2]
-			, fall[shape][form][3] };
+			ushort_16 fall[4] =
+			{ ball[shape][form][0]
+			, ball[shape][form][1]
+			, ball[shape][form][2]
+			, ball[shape][form][3] };
+			JudgeEnd(fall, floor);
 			while (1)
 			{
-				Drawfall(temp, floor);
+				Drawfall(fall, floor);
 				if (t == 0)
 				{
 					t = 15000;
@@ -27,61 +28,75 @@ int main()
 				}
 				if (t != 0)
 				{
+					auto isRight = [&](ushort_16 fall[], ushort_16 floor)
+						{
+							for (ushort_16 j = 0; j <= 3; j++)
+								if (((fall[j] >> 1) & data[floor + j]))
+									return true;
+							return false;
+						};
+					auto isLeft = [&](ushort_16 fall[], ushort_16 floor)
+						{
+							for (ushort_16 j = 0; j <= 3; j++)
+								if (((fall[j] << 1) & data[floor + j]))
+									return true;
+							return false;
+						};
 					char ch = getch();
 					switch (ch)
 					{
 					case DOWN:
 					{
-						if (!isDown(temp, floor))
+						if (!isDown(fall, floor))
 						{
-							DrawBlock(temp, floor);
+							DrawBlock(fall, floor);
 							floor++;
 						}
 						break;
 					}
 					case LEFT:
 					{
-						auto isLeft = [&](ushort_16 temp[], ushort_16 floor)
-							{
-								for (ushort_16 j = 0; j <= 3; j++)
-									if (((temp[j]<<1) & data[floor + j]))
-										return true;
-								return false;
-							};
-						if (!isLeft(temp, floor))
+						if (!isLeft(fall, floor))
 						{
-							DrawBlock(temp, floor);
+							DrawBlock(fall, floor);
 							for (int j = 0; j < 4; j++)
-								temp[j] = temp[j] << 1;
+								fall[j] = fall[j] << 1;
+							Offset_Left++;
 						}
 						break;
 					}
 					case RIGHT:
 					{
-						auto isRight = [&](ushort_16 temp[], ushort_16 floor)
+							if (!isRight(fall, floor))
 							{
-								for (ushort_16 j = 0; j <= 3; j++)
-									if (((temp[j] >> 1) & data[floor + j]))
-										return true;
-								return false;
-							};
-							if (!isRight(temp, floor))
-							{
-								DrawBlock(temp, floor);
+								DrawBlock(fall, floor);
 								for (int j = 0; j < 4; j++)
-									temp[j] = temp[j] >> 1;
+									fall[j] = fall[j] >> 1;
+								Offset_Right++;
 							}
 						break;
 					}
 					case SPACE:
 					{
-						if (!isDown(temp, floor))
+						if (!isDown(fall, floor))
 						{
-							DrawBlock(temp, floor);
+							DrawBlock(fall, floor);
 							form = (form + 1) % 4;
 							for (int j = 0; j < 4; j++)
-								temp[j] = fall[shape][form][j];
-						}
+								fall[j] = ball[shape][form][j];
+							for (int i = 0; i < Offset_Left; i++)
+							{
+								if(!isLeft(fall, floor))
+									for (int j = 0; j < 4; j++)
+										fall[j] = fall[j] << 1;
+							}
+							for (int k = 0; k < Offset_Right; k++)
+							{
+								if (!isRight(fall, floor))
+									for (int j = 0; j < 4; j++)
+										fall[j] = fall[j] << 1;
+							}
+				}
 						break;
 					}
 					case ESC:
@@ -92,6 +107,7 @@ int main()
 					case 's':
 					case 'S':
 						system("pause>nul");
+						break;
 					case 'r':
 					case 'R':
 						system("cls");
@@ -100,15 +116,15 @@ int main()
 				}
 				else
 				{
-					if (!isDown(temp, floor))
+					if (!isDown(fall, floor))
 					{
-						DrawBlock(temp, floor);
+						DrawBlock(fall, floor);
 						floor++;
 
 					}
 					else
 					{
-						Fill(temp, floor);
+						Fill(fall, floor);
 						if (Full())
 							Move();
 						break;
