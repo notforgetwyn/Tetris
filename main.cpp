@@ -6,13 +6,16 @@ int main()
 	srand((unsigned int)time(NULL));
 		while (1)
 		{
+			
 			int t = 0;
 			ushort_16 shape = rand() % 7, form = rand() % 4, floor = 0;
+			ushort_16 next_shape = rand() % 7, next_form = rand() % 4,next_floor=0;
 			ushort_16 fall[4] =
 			{ ball[shape][form][0]
 			, ball[shape][form][1]
 			, ball[shape][form][2]
 			, ball[shape][form][3] };
+			color(shape);
 			JudgeEnd(fall, floor);
 			while (1)
 			{
@@ -61,7 +64,6 @@ int main()
 							DrawBlock(fall, floor);
 							for (int j = 0; j < 4; j++)
 								fall[j] = fall[j] << 1;
-							Offset_Left++;
 						}
 						break;
 					}
@@ -72,7 +74,6 @@ int main()
 								DrawBlock(fall, floor);
 								for (int j = 0; j < 4; j++)
 									fall[j] = fall[j] >> 1;
-								Offset_Right++;
 							}
 						break;
 					}
@@ -81,6 +82,40 @@ int main()
 						if (!isDown(fall, floor))
 						{
 							DrawBlock(fall, floor);
+								ushort_16 i = 0, j = 0;
+							while (1)
+							{
+								auto ConverRight = [&]()
+									{
+										if ((fall[0]== (ball[shape][form][0] >> i)) &&
+											(fall[1] == (ball[shape][form][1] >> i)) &&
+											(fall[2] == (ball[shape][form][2] >> i)) &&
+											(fall[3] == (ball[shape][form][3] >> i)))
+												return true;
+										return false;
+									};
+								auto ConverLeft = [&]()
+									{
+										if ((fall[0] == (ball[shape][form][0] << j)) &&
+											(fall[1] == (ball[shape][form][1] << j)) &&
+											(fall[2] == (ball[shape][form][2] << j)) &&
+											(fall[3] == (ball[shape][form][3] << j)))
+												return true;
+										return false;
+									};
+								if (ConverRight())
+								{
+									Offset_Right = i;
+									break;
+								}
+								if (ConverLeft())
+								{
+									Offset_Left = j;
+									break;
+								}
+								i++;
+								j++;
+							}
 							form = (form + 1) % 4;
 							for (int j = 0; j < 4; j++)
 								fall[j] = ball[shape][form][j];
@@ -92,10 +127,11 @@ int main()
 							}
 							for (int k = 0; k < Offset_Right; k++)
 							{
-								if (!isRight(fall, floor))
+								if (!isLeft(fall, floor))
 									for (int j = 0; j < 4; j++)
 										fall[j] = fall[j] << 1;
 							}
+							Offset_Right = 0, Offset_Left = 0;
 				}
 						break;
 					}
@@ -126,7 +162,12 @@ int main()
 					{
 						Fill(fall, floor);
 						if (Full())
+						{
 							Move();
+							grade = grade + 10;
+							CursorJump(20, 22);
+							printf("当前分数：%d", grade);
+						}
 						break;
 					}
 				}
